@@ -1,0 +1,207 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>scripts.choice_three &#8212; assignment3  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for scripts.choice_three</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">.. module:: choice_three</span>
+<span class="sd">    :platform: Unix</span>
+<span class="sd">    :synopsis: Python code for the robot drive manually with help to not crash walls</span>
+<span class="sd">.. moduleauthor:: Hussein Hassan  S5165612@studenti.unige.it</span>
+
+<span class="sd">Service:</span>
+<span class="sd">    /robot_coordinates</span>
+<span class="sd">Subscribes to :</span>
+<span class="sd">    /map_update_cmd_vel</span>
+<span class="sd">    /scan</span>
+<span class="sd">publish to :</span>
+<span class="sd">    /cmd_vel</span>
+
+
+<span class="sd">This node is used for the user choice number three which is resposible for robot drive maually </span>
+<span class="sd">but if it&#39;s about to crash the wall the robot stops.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">rospy</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">geometry_msgs.msg</span> <span class="kn">import</span> <span class="n">Twist</span><span class="p">,</span> <span class="n">Vector3</span>    
+<span class="kn">from</span> <span class="nn">sensor_msgs.msg</span> <span class="kn">import</span> <span class="n">LaserScan</span> 
+
+<span class="c1">#min distance between the robot and the obstacle</span>
+<span class="n">min_dist</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="n">init</span> <span class="o">=</span> <span class="n">Vector3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">assigned</span> <span class="o">=</span> <span class="n">Twist</span><span class="p">(</span> <span class="n">init</span><span class="p">,</span> <span class="n">init</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="find_min_dist"><a class="viewcode-back" href="../../master.html#scripts.choice_three.find_min_dist">[docs]</a><span class="k">def</span> <span class="nf">find_min_dist</span><span class="p">(</span><span class="n">ranges</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is used for finding the minimum distance between the robot and the obstical </span>
+<span class="sd">    </span>
+<span class="sd">    args:</span>
+<span class="sd">        ranges(float):ranges angels of the robot vision </span>
+
+<span class="sd">    return:</span>
+<span class="sd">        dist_all_directions(list):the nearest obsticales in all directions </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dist_all_directions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1">#Make direction for each range</span>
+    <span class="n">right_range</span> <span class="o">=</span> <span class="n">ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">240</span><span class="p">]</span>
+    <span class="n">front_range</span> <span class="o">=</span> <span class="n">ranges</span><span class="p">[</span><span class="mi">240</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span>
+    <span class="n">left_range</span>  <span class="o">=</span> <span class="n">ranges</span><span class="p">[</span><span class="mi">480</span><span class="p">:</span><span class="mi">721</span><span class="p">]</span>
+    <span class="c1">#compute and store the min dist_all_directions</span>
+    <span class="n">dist_all_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">right_range</span><span class="p">)</span>
+    <span class="n">dist_all_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">front_range</span><span class="p">)</span>
+    <span class="n">dist_all_directions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">left_range</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dist_all_directions</span></div>
+        
+  
+
+<div class="viewcode-block" id="callback_scan"><a class="viewcode-back" href="../../master.html#scripts.choice_three.callback_scan">[docs]</a><span class="k">def</span> <span class="nf">callback_scan</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is used for stop the robot when the robot face an obstical in any direction</span>
+<span class="sd">    </span>
+<span class="sd">    args:</span>
+<span class="sd">        data(float):data which the robot gets from laser scanner </span>
+<span class="sd"> </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">assigned</span>
+    
+    <span class="n">pub</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s1">&#39;cmd_vel&#39;</span><span class="p">,</span><span class="n">Twist</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#Calculate the minimun obstacle distances in the whole directions (right , left and front)</span>
+    <span class="n">param_flag</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">get_param</span><span class="p">(</span><span class="s2">&quot;/obstical_avoidance_with_keyboard&quot;</span><span class="p">)</span>
+    <span class="n">dist_all_directions</span> <span class="o">=</span> <span class="n">find_min_dist</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">ranges</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">param_flag</span> <span class="p">:</span>
+        <span class="k">if</span> <span class="n">dist_all_directions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_dist</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="n">assigned</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">:</span>
+                <span class="c1">#don&#39;t turn right  </span>
+                <span class="n">assigned</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>    
+        <span class="k">if</span> <span class="n">dist_all_directions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_dist</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">assigned</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
+                <span class="c1">#dont&#39; go forward to the obstacle</span>
+                <span class="n">assigned</span><span class="o">.</span><span class="n">linear</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">dist_all_directions</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">min_dist</span> <span class="p">:</span>
+            <span class="k">if</span> <span class="n">assigned</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
+                <span class="c1">#don&#39;t move left</span>
+                <span class="n">assigned</span><span class="o">.</span><span class="n">angular</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">pub</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">assigned</span><span class="p">)</span></div>
+    
+
+
+
+
+
+<span class="c1">#copy rmap udate from cmd_vel in the global variable which is modified by the controller </span>
+
+<div class="viewcode-block" id="callback_map_update"><a class="viewcode-back" href="../../master.html#scripts.choice_three.callback_map_update">[docs]</a><span class="k">def</span> <span class="nf">callback_map_update</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function is used for updating the global variable with new controller input</span>
+<span class="sd">    </span>
+<span class="sd">    args:</span>
+<span class="sd">        data(float):data which the robot gets from laser scanner </span>
+<span class="sd"> </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">assigned</span>
+    <span class="c1">#update the global variable with new controller input </span>
+    
+    <span class="n">assigned</span> <span class="o">=</span> <span class="n">data</span>        </div>
+  
+    
+    
+<span class="c1">#main </span>
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">init_node</span><span class="p">(</span><span class="s1">&#39;keyboard_interface_node&#39;</span><span class="p">)</span>
+    <span class="c1">#subscriber to topic map_update_cmd_vel    </span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/map_update_cmd_vel&quot;</span><span class="p">,</span> <span class="n">Twist</span><span class="p">,</span> <span class="n">callback_map_update</span><span class="p">)</span>
+    <span class="c1">#subscriber to topic scan</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">Subscriber</span><span class="p">(</span><span class="s2">&quot;/scan&quot;</span><span class="p">,</span> <span class="n">LaserScan</span><span class="p">,</span> <span class="n">callback_scan</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../master.html">assignment3</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../master.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Hussein Hassan.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

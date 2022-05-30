@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+   
+   <param name="obstical_avoidance_with_keyboard" value="false" />
+   
+   <node name="keyboard_interface_node" pkg="assignment3" type="choice_three.py"  />
+   <node name="robot_coordinates" pkg="assignment3" type="choice_one.py"  />
+
+</launch>
