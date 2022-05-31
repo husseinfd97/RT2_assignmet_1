@@ -36,10 +36,12 @@ User_interface.ipynb
 To make the scripts excutable in the direction of scripts. 
 
 ## 3- Research track1_1st assignment sstatistical analysis:
-  **Introduction**\
   
   
+  [Statestics_RT2.xlsx](https://github.com/husseinfd97/RT2_assignmet_1/files/8804885/Statestics_RT2.xlsx)
+[RT2_statistics_report.pdf](https://github.com/husseinfd97/RT2_assignmet_1/files/8804891/RT2_statistics_report.pdf)
 
-    
+
+   
 
       
