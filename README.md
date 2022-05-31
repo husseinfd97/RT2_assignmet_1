@@ -43,7 +43,7 @@ To make the scripts excutable in the direction of scripts.
 
 Once you run the required launch files then the jupyter file and run all cells the main minu appears which has two choices ( case 1:autonomous **or** case2: drive keyboard) then if you choose (autonomous mode)  it waits for the user's input of x , y coordinates and then you should press (start the case) button to use move the robot autonumously to your desired coordinates once it arrived the target the histogram graph shows the reached targets and the coordinates and laser scanner plots will be updates automatically. \
 Another mode can be chosen by the user is the manual drive with assitance or without , once you press drive keyboard button the keyboard interface appears to let the user move the robot manually. \
-The obsticale avoidance mode is activated/deactivaed by the checkbox which will appear once the user chose drive keyboard button. \
+The obsticale avoidance mode is activated/deactivaed by the checkbox which will appear once the user chose drive keyboard button. 
 
 ### Possible improvements
 
