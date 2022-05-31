@@ -1,4 +1,4 @@
-# Research track_assignmet_1
+# Research track2_assignmet_1
 This assignment cosists of three parts: 
   1) Research track1_3rd assignment documentation using sphinx
   2) Robot drive and plot using jupyter
@@ -34,6 +34,11 @@ User_interface.ipynb
     
   **Note**:
 To make the scripts excutable in the direction of scripts. 
+
+## 3- Research track1_1st assignment sstatistical analysis:
+  **Introduction**\
+  
+  
 
     
 
