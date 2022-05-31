@@ -47,7 +47,7 @@ The obsticale avoidance mode is activated/deactivaed by the checkbox which will 
 
 ### Possible improvements
 
-- Make buttons for showing up the each map seperately.
+- Make buttons for showing up each map seperately.
 - Make sliders for control angular and linear velocities.
 - Adding red alarms once the robot is near to the obstacles in manual drive with assistance mode. 
 
@@ -58,7 +58,7 @@ The obsticale avoidance mode is activated/deactivaed by the checkbox which will 
 This assignment mainly consists of three parts:\
 1- The average time required to finish the circuit of research track1 assignment using T-test.\
 2- The success and failure times using Chi-square test.\
-3- The number of being near to yellow borders using T-test.\
+3- The number of being near to yellow borders using T-test.
 
 And here you can find the report [RT2_statistics_report.pdf](https://github.com/husseinfd97/RT2_assignmet_1/files/8804891/RT2_statistics_report.pdf) and the excel sheet used for analysis [Statestics_RT2.xlsx](https://github.com/husseinfd97/RT2_assignmet_1/files/8804885/Statestics_RT2.xlsx)
  
